@@ -1,23 +1,43 @@
 import React, { FC, ChangeEvent, useState } from "react";
-import { ITask } from "./Interfaces";
+import { ITask, IInput } from "./Interfaces";
 import "./App.css";
 import TodoTask from "./Components/Todo";
 
-const App: FC = () => {
-  const [task, setTask] = useState<string>("");
-  const [deadline, setDeadline] = useState<number>(0);
-  const [todoList, setTodoList] = useState<ITask[]>([]);
+const propsTaskInput: IInput = {
+  type: "text",
+  placeholder: "Task",
+  name: "task",
+};
 
+const propsDeadlineInput: IInput = {
+  type: "number",
+  placeholder: "Deadline in days",
+  name: "deadline",
+};
+
+const App: FC = () => {
+  const [task, setTask] = useState<string>(""); // use simple type
+  const [deadline, setDeadline] = useState<number | undefined>(undefined); // use union
+  const [todoList, setTodoList] = useState<ITask[]>([]); // use interface
+
+  // use HTMLInputElement
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.name === "task") {
-      setTask(event.target.value);
-    } else {
-      setDeadline(Number(event.target.value));
+    // Exhaustiveness checking
+    switch (event.target.name) {
+      case "task":
+        setTask(event.target.value);
+        break;
+      case "deadline":
+        setDeadline(Number(event.target.value));
+        break;
+      default:
+        console.log("this type of input does not have any handling function");
     }
   };
 
+  // use void
   const addTask = (): void => {
-    const newTask = {
+    const newTask: ITask = {
       taskName: task,
       deadline,
     };
@@ -26,6 +46,7 @@ const App: FC = () => {
     setDeadline(0);
   };
 
+  // set type for arg
   const completeTask = (taskNameToDelete: string): void => {
     setTodoList(
       todoList.filter((task) => {
@@ -38,19 +59,11 @@ const App: FC = () => {
     <div className="App">
       <div className="header">
         <div className="inputContainer">
+          <input value={task} onChange={handleChange} {...propsTaskInput} />
           <input
-            type="text"
-            value={task}
-            placeholder="Task"
-            onChange={handleChange}
-            name="task"
-          />
-          <input
-            type="number"
             value={deadline}
-            placeholder="Deadline in days"
             onChange={handleChange}
-            name="deadline "
+            {...propsDeadlineInput}
           />
         </div>
         <button onClick={addTask}>Add task</button>
