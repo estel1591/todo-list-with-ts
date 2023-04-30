@@ -2,12 +2,12 @@ import React from "react";
 import { ITask } from "../Interfaces";
 
 interface Props {
-  task: ITask;
-  completeTask(taskNameToDelete: string): void;
+  task: ITask; // set type for object using interface
+  completeTask(taskNameToDelete: string): void; // set type for method
 }
 
+// set type for functional component
 const TodoTask = ({ task, completeTask }: Props) => {
-  console.log("test");
   return (
     <div className="task">
       <div className="content">
